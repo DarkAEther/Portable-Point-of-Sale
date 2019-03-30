@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainScreen"
+    android:orientation="vertical">
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="112dp" />
+
+    <Button
+        android:id="@+id/goto_sale"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="New Sale" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <Button
+        android:id="@+id/goto_itemmgmt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Manage Stock Items" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <Button
+        android:id="@+id/goto_transact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View Past Transactions" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <Button
+        android:id="@+id/goto_inventory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View Inventory Levels" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <Button
+        android:id="@+id/goto_order"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Re-order Item" />
+
+    <Button
+        android:id="@+id/goto_supp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Suppliers" />
+</LinearLayout>
