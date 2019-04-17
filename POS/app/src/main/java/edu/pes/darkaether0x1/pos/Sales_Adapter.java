@@ -12,19 +12,19 @@ import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class Sales_Adapter extends BaseAdapter implements ListAdapter {
-    private List<Item> list = new ArrayList<Item>();
+    private List<Item> list;
     private Context context;
+    private TextView total;
 
-    public Sales_Adapter(List<Item> list, Context context) {
+    public Sales_Adapter(List<Item> list, Context context, TextView total) {
         this.list = list;
         this.context = context;
+        this.total = total;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class Sales_Adapter extends BaseAdapter implements ListAdapter {
         TextView price = view.findViewById(R.id.price_item);
         TextView name = view.findViewById(R.id.nametext);
 
-        Item a = list.get(position);
+        final Item a = list.get(position);
         code.setText(a.getcode());
         qty.setText(a.getqty());
         price.setText(a.getprice());
@@ -71,6 +71,8 @@ public class Sales_Adapter extends BaseAdapter implements ListAdapter {
             public void onClick(View v) {
                 //do something
                 list.remove(position); //or some other task
+                Float newprice = Float.parseFloat(total.getText().toString().trim())- Float.parseFloat(a.getprice())*Float.parseFloat(a.getqty());
+                total.setText(String.format("%.2f",newprice));
                 notifyDataSetChanged();
             }
         });

@@ -32,6 +32,10 @@ public class ActivityS6 extends AppCompatActivity {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (id.getText().toString().equals("") || name.getText().toString().equals("") || email.getText().toString().equals("")){
+                    showMessage("Insufficient Data","Please fill all the fields");
+                    return;
+                }
                 Cursor c = db.rawQuery("SELECT * from suppliers WHERE id='" + id.getText().toString() + "'", null);
                 if (c.moveToFirst()) {
 
@@ -49,6 +53,10 @@ public class ActivityS6 extends AppCompatActivity {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (id.getText().toString().equals("")){
+                    showMessage("Insufficient Data","Please fill all the fields");
+                    return;
+                }
                 Cursor c = db.rawQuery("SELECT * from suppliers WHERE id='" + id.getText().toString() + "'", null);
                 if (c.moveToFirst()) {
                     name.setText(c.getString(1));
@@ -62,6 +70,10 @@ public class ActivityS6 extends AppCompatActivity {
         del.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (id.getText().toString().equals("")){
+                    showMessage("Insufficient Data","Please fill all the fields");
+                    return;
+                }
                 Cursor c = db.rawQuery("SELECT * from suppliers WHERE id='" + id.getText().toString() + "'", null);
                 if (c.moveToFirst()) {
                     db.execSQL("DELETE FROM suppliers WHERE id = '"+id.getText().toString().trim()+"';");
@@ -79,6 +91,10 @@ public class ActivityS6 extends AppCompatActivity {
         mod.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (id.getText().toString().equals("") ){
+                    showMessage("Insufficient Data","Please fill all the fields");
+                    return;
+                }
                 Cursor c = db.rawQuery("SELECT * from suppliers WHERE id='" + id.getText().toString() + "'", null);
                 if (c.moveToFirst()) {
                     db.execSQL("UPDATE suppliers SET name='" + name.getText().toString().trim() + "',email='"+email.getText().toString().trim()+"' WHERE id = '" + id.getText().toString().trim() + "';");

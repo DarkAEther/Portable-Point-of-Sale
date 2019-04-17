@@ -59,12 +59,7 @@ public class ActivityS5 extends AppCompatActivity {
         price = findViewById(R.id.price_invent);
 
         db = openOrCreateDatabase("core.db",Context.MODE_PRIVATE,null);
-        db.execSQL("CREATE TABLE IF NOT EXISTS 'items' ( 'code' TEXT NOT NULL, 'name' TEXT NOT NULL, 'qty' INTEGER NOT NULL DEFAULT 0, 'price' REAL, PRIMARY KEY('code'))");
-        db.execSQL("CREATE TABLE IF NOT EXISTS 'suppliers' ( 'id' INTEGER PRIMARY KEY, 'name' TEXT NOT NULL, 'email' TEXT NOT NULL)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS  \"transactions\" ( 'id' INTEGER PRIMARY KEY AUTOINCREMENT, 'amount' REAL, 'paymethod' TEXT, 'date' TEXT)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS 'transaction_items' ( 'transaction_id' INTEGER, 'item_id' TEXT, FOREIGN KEY('transaction_id') REFERENCES 'transactions'('id'))");
-        db.execSQL("CREATE TABLE IF NOT EXISTS 'supplier_item' ( 'supplier_id' INTEGER, 'item_id' TEXT, FOREIGN KEY('supplier_id') REFERENCES 'suppliers'('id'))");
-        
+
         scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,13 +82,21 @@ public class ActivityS5 extends AppCompatActivity {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (code.getText().toString().equals("") || name.getText().toString().equals("") || qty.getText().toString().equals("") || price.getText().equals("") || suppliers.getText().toString().equals("")){
+                    showMessage("Insufficient Data","Please enter all the required data");
+                    return;
+                }
+
                 Cursor c = db.rawQuery("SELECT * from items WHERE code='" + code.getText().toString() + "'", null);
                 if (!c.moveToFirst()) {
                     db.execSQL("INSERT INTO items VALUES('"+code.getText().toString()+"','"+name.getText().toString()+"','"+qty.getText().toString()+"','"+price.getText().toString()+"');");
                     String[] suppliertext = suppliers.getText().toString().split(",");
-
+                    Cursor find_suppliers;
                     for (String supp:suppliertext) {
-                        db.execSQL("INSERT INTO supplier_item VALUES ('"+supp+"','"+code.getText().toString()+"');");
+                        find_suppliers = db.rawQuery("SELECT * FROM suppliers WHERE id='"+supp+"'",null);
+                        if (find_suppliers.moveToFirst()) {
+                            db.execSQL("INSERT INTO supplier_item VALUES ('" + supp + "','" + code.getText().toString() + "');");
+                        }
                     }
 
                     showMessage("Success","New Item added to Inventory");
@@ -105,19 +108,27 @@ public class ActivityS5 extends AppCompatActivity {
                 }else{
                     showMessage("Error","Item exists");
                 }
-
-
             }
         });
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (code.getText().toString().equals("")){
+                    showMessage("Insufficient Data","Please enter all the required data");
+                    return;
+                }
                 Cursor c = db.rawQuery("SELECT * from items WHERE code='" + code.getText().toString() + "'", null);
+                Cursor c1 = db.rawQuery("SELECT * from supplier_item WHERE item_id='" +code.getText().toString()+"'",null);
                 if (c.moveToFirst()) {
                     price.setText(c.getString(3));
                     name.setText(c.getString(1));
                     qty.setText(c.getString(2));
+                    String supps="";
+                    while (c1.moveToNext()){
+                        supps+=c1.getString(0)+",";
+                    }
+                    suppliers.setText(supps);
                 }else{
                     showMessage("Error","Item not found");
                 }
@@ -128,7 +139,10 @@ public class ActivityS5 extends AppCompatActivity {
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (code.getText().toString().equals("")){
+                    showMessage("Insufficient Data","Please enter all the required data");
+                    return;
+                }
                 Cursor c = db.rawQuery("SELECT * from items WHERE code='" + code.getText().toString() + "'", null);
                 if (c.moveToFirst()) {
                     db.execSQL("DELETE FROM items WHERE code = '"+code.getText().toString().trim()+"';");
@@ -148,9 +162,21 @@ public class ActivityS5 extends AppCompatActivity {
         modify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (code.getText().toString().equals("")){
+                    showMessage("Insufficient Data","Please enter all the required data");
+                    return;
+                }
                 Cursor c = db.rawQuery("SELECT * from items WHERE code='" + code.getText().toString() + "'", null);
                 if (c.moveToFirst()) {
                     db.execSQL("UPDATE items SET name='" + name.getText().toString().trim() + "',qty='"+qty.getText().toString().trim()+"',price='"+price.getText().toString()+"' WHERE code = '" + code.getText().toString().trim() + "';");
+                    db.execSQL("DELETE FROM supplier_item WHERE item_id='"+code.getText().toString()+"';");
+
+                    String[] suppliertext = suppliers.getText().toString().split(",");
+
+                    for (String supp:suppliertext) {
+                        db.execSQL("INSERT INTO supplier_item VALUES ('"+supp+"','"+code.getText().toString()+"');");
+                    }
+
                     showMessage("Success","Record Updated");
                     code.setText("");
                     price.setText("");

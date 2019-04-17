@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -77,7 +78,7 @@ public class ActivityS1 extends AppCompatActivity {
 
         ListElements = new ArrayList<Item>();
 
-        final Sales_Adapter adapter = new Sales_Adapter(ListElements,this);
+        final Sales_Adapter adapter = new Sales_Adapter(ListElements,this,total);
         item_list.setAdapter(adapter);
 
         add_item.setOnClickListener(new View.OnClickListener() {
@@ -86,17 +87,24 @@ public class ActivityS1 extends AppCompatActivity {
                 Cursor c = db.rawQuery("SELECT * FROM items WHERE code = '"+barcode.getText().toString().trim()+"'",null);
                 String pr;
                 String name;
+                String stock;
                 if (c.moveToFirst()){
                     pr = c.getString(3);
                     name = c.getString(1);
+                    stock = c.getString(2);
+                    if (Integer.parseInt(stock) - Integer.parseInt(qty.getText().toString()) < 0){
+                        showMessage("Insufficient Stock","The Stock for this item is low");
+                        return;
+                    }
                 }else{
                     showMessage("Error","This Item doesn't exist");
                     return;
                 }
 
                 Item a = new Item(barcode.getText().toString(),name,qty.getText().toString(),pr);
-                gtot = Double.parseDouble(pr)*Double.parseDouble(qty.getText().toString()) + gtot;
-                total.setText(gtot.toString());
+                gtot = Double.parseDouble(pr)*Double.parseDouble(qty.getText().toString()) + Double.parseDouble(total.getText().toString());
+
+                total.setText(String.format("%.2f",gtot));
                 ListElements.add(a);
                 adapter.notifyDataSetChanged();
                 barcode.setText("");
@@ -109,6 +117,7 @@ public class ActivityS1 extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //activate barcode scanner to scan code
+
                 try {
 
                     Intent intent = new Intent("com.google.zxing.client.android.SCAN");
@@ -141,12 +150,17 @@ public class ActivityS1 extends AppCompatActivity {
                 for (Item it: ListElements) {
                     Cursor c = db.rawQuery("SELECT * FROM items WHERE code = '"+it.getcode()+"'",null);
                     if (c.moveToFirst()){
-                        db.execSQL("INSERT INTO transaction_items VALUES ('"+random.toString()+"','"+it.getcode()+"');");
+                        db.execSQL("INSERT INTO transaction_items VALUES ('"+random.toString()+"','"+it.getcode()+"','"+it.getqty()+"');");
+
+                        db.execSQL("UPDATE items SET qty = qty-'"+ it.getqty()+"' WHERE code='" + it.getcode()+"';");
                     }else{
                         showMessage("Error","This Item doesn't exist " + it.getcode());
                     }
                 }
                 showMessage("Success","Sale Completed");
+                Intent invoice = new Intent(getApplicationContext(),InvoiceActivity.class);
+                invoice.putExtra("transaction_id",random.toString());
+                startActivity(invoice);
                 finish();
             }
         });

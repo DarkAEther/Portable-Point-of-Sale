@@ -1,17 +1,21 @@
 package edu.pes.darkaether0x1.pos;
 
+
 public class Item {
     String price;
     String name;
     String barcode;
     String qty;
 
+
     Item (String barcode, String name,String qty, String price) {
         this.barcode = barcode;
         this.name = name;
         this.qty = qty;
         this.price = price;
+        //this.total = tx;
     }
+
     public String getcode() {
         return this.barcode;
     }
