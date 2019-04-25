@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
@@ -21,7 +22,7 @@ import java.util.Date;
 
 public class MainScreen extends AppCompatActivity {
 
-    Button tosale,tostock,totransactions,toorder,toinventory,tosupplier,no;
+    Button tosale,tostock,totransactions,toorder,toinventory,tosupplier,no,tosettings;
     SQLiteDatabase db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +34,7 @@ public class MainScreen extends AppCompatActivity {
         toorder = findViewById(R.id.goto_order);
         toinventory = findViewById(R.id.goto_inventory);
         tosupplier = findViewById(R.id.goto_supp);
+        tosettings = findViewById(R.id.settings);
         //no = findViewById(R.id.notif);
         db = openOrCreateDatabase("core.db", Context.MODE_PRIVATE,null);
         db.execSQL("CREATE TABLE IF NOT EXISTS 'items' ( 'code' TEXT NOT NULL, 'name' TEXT NOT NULL, 'qty' INTEGER NOT NULL DEFAULT 0, 'price' REAL, PRIMARY KEY('code'))");
@@ -46,6 +48,13 @@ public class MainScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(),ActivityS6.class);
+                startActivity(i);
+            }
+        });
+        tosettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(),Settings.class);
                 startActivity(i);
             }
         });
@@ -97,8 +106,13 @@ public class MainScreen extends AppCompatActivity {
         // Set the alarm to start at 17:30 PM
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 15);
-        calendar.set(Calendar.MINUTE, 1);
+        SharedPreferences sp = getSharedPreferences("mypref",MODE_PRIVATE);
+
+        String[] stored = sp.getString("notiftime","17:30").split(":");
+        int hour = Integer.parseInt(stored[0]);
+        int minute = Integer.parseInt(stored[1]);
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
 
 // setRepeating() lets you specify a precise custom interval--in this case,
 // 1 day

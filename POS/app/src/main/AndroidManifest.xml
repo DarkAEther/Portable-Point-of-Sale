@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ActivityS7"></activity>
+        <activity android:name=".Settings"></activity>
+        <activity android:name=".ActivityS7" />
         <activity android:name=".Transactions" />
         <activity android:name=".ActivityS4" />
         <activity android:name=".InvoiceActivity" />
@@ -25,11 +26,7 @@
         <activity android:name=".ActivityS5" />
         <activity android:name=".ActivityS1" />
 
-        <receiver android:name=".Sale_Service">
-
-        </receiver>
-
-
+        <receiver android:name=".Sale_Service"></receiver>
     </application>
 
 </manifest>
